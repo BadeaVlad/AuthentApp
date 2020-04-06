@@ -6,9 +6,9 @@ const app = express();
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => res.sendFile('auth.html', { root : __dirname}));
+app.get('reg', (req, res) => res.sendFile('reg.html', { root : __dirname}));
 
-const port = process.env.PORT || 3000;
+const port = 3000;
 app.listen(port , () => console.log('App listening on port ' + port));
 
 /*  PASSPORT */
@@ -30,7 +30,7 @@ passport.deserializeUser(function(id, cb) {
   });
 });
 
-/* MONGOOSE */
+/* MONGOOSE 
 
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/MyDatabase');
@@ -40,7 +40,7 @@ const UserDetail = new Schema({
       username: String,
       password: String
     });
-const UserDetails = mongoose.model('userInfo', UserDetail, 'userInfo');
+const UserDetails = mongoose.model('userInfo', UserDetail, 'userInfo');*/
 
 /* PASSPORT LOCAL */
 
@@ -72,3 +72,26 @@ app.post('/',
   function(req, res) {
     res.redirect('/success?username='+req.user.username);
   });
+
+/* MONGODB */
+
+const mongo = require('mongodb');
+const MongoClient = mongo.MongoClient;
+
+var url = "mongodb://localhost:27017/";
+
+MongoClient.connect(url, function(err, db) {
+
+    if (err) throw err;
+    var dbo = db.db("authdb");
+    /*dbo.createCollection("users", function(err, res) {
+      if (err) throw err;
+      console.log("Collection created!");
+    });*/
+    var myobj = { name: "Vlad", password: "admin" };
+    dbo.collection("users").insertOne(myobj, function(err, res) {
+      if (err) throw err;
+      console.log("1 document inserted");
+      db.close();
+    });
+});
